@@ -2,6 +2,8 @@
 
 A native Windows task manager for your Snapdragon Surface. Inspired by the clarity of [SiliconPulse](https://github.com/kingnazz/SiliconPulse-), independently implemented in C# and WPF for Windows on ARM.
 
+The 0.2 interface uses a compact instrument panel with individual CPU and memory charts, smaller network/power readouts, and separate top-consumer lists. Click a top process to inspect it. The same dark styling carries through the process table, search, dropdowns, and scrollbars.
+
 ## Run on your Surface
 
 1. Download **ARMpulse-win-arm64.zip** from [Releases](https://github.com/kingnazz/ARMpulse/releases) for a Snapdragon Surface running Windows 11. Extract the ZIP to a folder you control.
@@ -14,7 +16,7 @@ The ZIP is produced in `artifacts/` by the build below. The **Build and validate
 
 ## What it does
 
-- **Overview:** CPU, physical memory, network receive/send rates, battery and power source, bounded CPU/memory charts, and the busiest processes.
+- **Overview:** CPU and physical memory with individual bounded charts; compact network and power readouts; separate top CPU and memory lists with click-through inspection.
 - **Processes:** searchable, numerically sortable, virtualized process table; working sets, CPU, I/O, architecture, executable path, and thread count. Export the filtered, sorted snapshot as CSV.
 - **Windows on ARM:** identifies ARM64 and compatibility machine types. `x64 on ARM` can include ARM64EC hybrid apps; it does not mean every module is emulated.
 - **Process controls:** open the executable’s folder, set Below Normal CPU priority, or force end an individual process after confirmation. Process actions validate the creation time through the same kernel handle used for the action. Critical, session-zero, inaccessible, stale, and ARMpulse’s own processes are blocked. There is no automatic elevation or process-tree termination.

@@ -97,6 +97,15 @@ public partial class MainWindow : Window
 
     private void Pause_Click(object sender, RoutedEventArgs e) => _vm.Paused = !_vm.Paused;
     private void ViewProcesses_Click(object sender, RoutedEventArgs e) => _vm.PageIndex = 1;
+    private void ViewProcess_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: ProcessSample process }) return;
+        _vm.Query = "";
+        _vm.Filter = "All processes";
+        _vm.PageIndex = 1;
+        _vm.Selected = _vm.Processes.FirstOrDefault(p => p.Identity == process.Identity);
+        Dispatcher.BeginInvoke(() => { if (_vm.Selected is { } selected) ProcessGrid.ScrollIntoView(selected); });
+    }
     private void HighMemory_Click(object sender, RoutedEventArgs e) { _vm.Filter = "High memory"; _vm.PageIndex = 1; }
 
     private async void EndProcess_Click(object sender, RoutedEventArgs e)

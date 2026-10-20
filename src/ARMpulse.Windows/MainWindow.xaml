@@ -1,133 +1,232 @@
-<Window x:Class="ARMpulse.Windows.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:charts="clr-namespace:ARMpulse.Windows.Controls"
-        Style="{StaticResource {x:Type Window}}" Title="ARMpulse" Icon="Assets/ARMpulse.ico" Width="1280" Height="860" MinWidth="960" MinHeight="640" WindowStartupLocation="CenterScreen" Topmost="{Binding AlwaysOnTop}">
+<Window x:Class="ARMpulse.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:charts="clr-namespace:ARMpulse.Windows.Controls"
+        Style="{StaticResource {x:Type Window}}" Title="ARMpulse" Icon="Assets/ARMpulse.ico"
+        Width="1280" Height="860" MinWidth="960" MinHeight="640"
+        WindowStartupLocation="CenterScreen" Topmost="{Binding AlwaysOnTop}">
+  <Window.Resources>
+    <DataTemplate x:Key="TopCpuTemplate">
+      <Button Style="{StaticResource ProcessRowButton}" Tag="{Binding}" Click="ViewProcess_Click" AutomationProperties.Name="{Binding Name}">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="70"/></Grid.ColumnDefinitions>
+          <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="0,0,10,0"/>
+          <TextBlock Grid.Column="1" Text="{Binding CpuText}" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Right"/>
+        </Grid>
+      </Button>
+    </DataTemplate>
+    <DataTemplate x:Key="TopMemoryTemplate">
+      <Button Style="{StaticResource ProcessRowButton}" Tag="{Binding}" Click="ViewProcess_Click" AutomationProperties.Name="{Binding Name}">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="85"/></Grid.ColumnDefinitions>
+          <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="0,0,10,0"/>
+          <TextBlock Grid.Column="1" Text="{Binding MemoryText}" Foreground="{StaticResource MemoryBrush}" HorizontalAlignment="Right"/>
+        </Grid>
+      </Button>
+    </DataTemplate>
+  </Window.Resources>
   <Grid>
-    <Grid.ColumnDefinitions><ColumnDefinition Width="202"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <Border Background="#14181B" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,1,0">
-      <Grid Margin="16,26,16,20">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="178"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+    <Border Background="{StaticResource SidebarBrush}" BorderBrush="#303033" BorderThickness="0,0,1,0">
+      <Grid Margin="12,20,12,16">
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <StackPanel>
-          <StackPanel Orientation="Horizontal" Margin="9,0,0,5">
-            <Border Width="29" Height="29" Background="#7BE2B0" CornerRadius="8" Margin="0,0,10,0"><TextBlock Text="ϟ" FontSize="25" Foreground="#12251D" HorizontalAlignment="Center" Margin="0,-4,0,0"/></Border>
-            <TextBlock Text="ARMpulse" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" Margin="9,0,0,22">
+            <Image Source="Assets/ARMpulse.ico" Width="22" Height="22" Margin="0,0,8,0"/>
+            <TextBlock Text="ARMpulse" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
           </StackPanel>
-          <TextBlock Text="A little more clarity." Style="{StaticResource Muted}" FontSize="11" Margin="10,7,0,34"/>
-          <TextBlock Text="WORKSPACE" Style="{StaticResource Label}" Margin="14,0,0,8"/>
           <ListBox SelectedIndex="{Binding PageIndex}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavItem}" AutomationProperties.Name="Navigation">
-            <ListBoxItem AutomationProperties.Name="Overview"><TextBlock Text="◈   Overview" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></ListBoxItem>
-            <ListBoxItem AutomationProperties.Name="Processes"><TextBlock Text="☷   Processes" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></ListBoxItem>
-            <ListBoxItem AutomationProperties.Name="Memory"><TextBlock Text="▤   Memory" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></ListBoxItem>
-            <ListBoxItem AutomationProperties.Name="History"><TextBlock Text="↗   History" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></ListBoxItem>
-            <ListBoxItem AutomationProperties.Name="Settings"><TextBlock Text="⚙   Settings &amp; about" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></ListBoxItem>
+            <ListBoxItem AutomationProperties.Name="Overview"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource NavIcon}" Data="{StaticResource OverviewIcon}"/><TextBlock Text="Overview" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></StackPanel></ListBoxItem>
+            <ListBoxItem AutomationProperties.Name="Processes"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource NavIcon}" Data="{StaticResource ProcessesIcon}"/><TextBlock Text="Processes" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></StackPanel></ListBoxItem>
+            <ListBoxItem AutomationProperties.Name="Memory"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource NavIcon}" Data="{StaticResource MemoryIcon}"/><TextBlock Text="Memory" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></StackPanel></ListBoxItem>
+            <ListBoxItem AutomationProperties.Name="History"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource NavIcon}" Data="{StaticResource HistoryIcon}"/><TextBlock Text="History" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></StackPanel></ListBoxItem>
+            <ListBoxItem AutomationProperties.Name="Settings"><StackPanel Orientation="Horizontal"><Path Style="{StaticResource NavIcon}" Data="{StaticResource SettingsIcon}"/><TextBlock Text="Settings" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/></StackPanel></ListBoxItem>
           </ListBox>
         </StackPanel>
-        <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="9,18,0,0">
-          <StackPanel><TextBlock Text="WINDOWS ON ARM" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold"/><TextBlock Text="{Binding Machine}" Margin="0,7,0,4" TextTrimming="CharacterEllipsis"/><TextBlock Text="Native. Local. Yours." Style="{StaticResource Muted}" FontSize="11"/></StackPanel>
-        </Border>
+        <StackPanel Grid.Row="2" Margin="9,0,4,0">
+          <TextBlock Text="{Binding Machine}" TextTrimming="CharacterEllipsis" FontWeight="Medium" Margin="0,0,0,4"/>
+          <TextBlock Text="{Binding PlatformLabel}" Style="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock Text="Local only · no telemetry" Style="{StaticResource Muted}" FontSize="10" Margin="0,12,0,0"/>
+        </StackPanel>
       </Grid>
     </Border>
-    <Grid Grid.Column="1" Margin="30,26,30,14">
+    <Grid Grid.Column="1" Margin="24,20,24,12">
       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-      <Grid Margin="0,0,0,24">
+      <Grid Margin="0,0,0,18">
         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-        <StackPanel><TextBlock Text="{Binding PageTitle}" FontSize="27" FontWeight="SemiBold"/><TextBlock Text="{Binding PageSubtitle}" Style="{StaticResource Muted}" Margin="0,8,20,0"/></StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0">
-          <Border Background="#20382E" CornerRadius="5" Padding="9,7" Margin="0,0,12,0" VerticalAlignment="Center"><TextBlock Text="{Binding LiveText}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="Bold"/></Border>
+        <StackPanel Margin="0,0,16,0">
+          <TextBlock AutomationProperties.AutomationId="PageTitle" Text="{Binding PageTitle}" FontSize="22" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding PageSubtitle}" Style="{StaticResource Muted}" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <Ellipse Width="6" Height="6" Fill="{StaticResource GoodBrush}" VerticalAlignment="Center" Margin="0,0,6,0">
+            <Ellipse.Style><Style TargetType="Ellipse"><Style.Triggers><DataTrigger Binding="{Binding Paused}" Value="True"><Setter Property="Opacity" Value="0.3"/></DataTrigger></Style.Triggers></Style></Ellipse.Style>
+          </Ellipse>
+          <TextBlock Text="{Binding SamplingText}" Style="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center" Margin="0,0,12,0"/>
           <Button Content="{Binding PauseText}" Click="Pause_Click" ToolTip="Pause or resume monitoring (Ctrl+Space)"/>
         </StackPanel>
       </Grid>
 
-      <!-- OVERVIEW -->
-      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=0}">
-        <StackPanel Margin="0,0,8,0">
-          <UniformGrid Columns="4" Margin="0,0,-12,20">
-            <Border Style="{StaticResource Panel}" Margin="0,0,12,0" ToolTip="Calculated from GetSystemTimes. Total CPU capacity = 100%."><StackPanel><TextBlock Text="CPU" Style="{StaticResource Label}"/><TextBlock AutomationProperties.AutomationId="LiveCpu" Text="{Binding Cpu}" Style="{StaticResource Metric}" Foreground="{StaticResource AccentBrush}"/><TextBlock Text="{Binding Processor}" Style="{StaticResource Muted}" FontSize="11"/></StackPanel></Border>
-            <Border Style="{StaticResource Panel}" Margin="0,0,12,0" ToolTip="Physical memory in use, reported by GlobalMemoryStatusEx."><StackPanel><TextBlock Text="MEMORY" Style="{StaticResource Label}"/><TextBlock AutomationProperties.AutomationId="LiveMemory" Text="{Binding Memory}" Style="{StaticResource Metric}" Foreground="#B8A5FA"/><TextBlock Text="{Binding MemoryDetail}" Style="{StaticResource Muted}" FontSize="11"/></StackPanel></Border>
-            <Border Style="{StaticResource Panel}" Margin="0,0,12,0" ToolTip="Received bytes per second across active adapters, excluding loopback and tunnel adapters. Virtual adapters may count traffic twice."><StackPanel><TextBlock Text="NETWORK  ↓" Style="{StaticResource Label}"/><TextBlock Text="{Binding Download}" FontSize="23" FontWeight="SemiBold" Margin="0,4,0,8" Foreground="#80BEF4"/><TextBlock Style="{StaticResource Muted}" FontSize="11"><Run Text="↑ "/><Run Text="{Binding Upload, Mode=OneWay}"/></TextBlock></StackPanel></Border>
-            <Border Style="{StaticResource Panel}" Margin="0,0,12,0" ToolTip="Reported by Windows GetSystemPowerStatus."><StackPanel><TextBlock Text="BATTERY" Style="{StaticResource Label}"/><TextBlock Text="{Binding Battery}" Style="{StaticResource Metric}"/><TextBlock Text="{Binding Power}" Style="{StaticResource Muted}" FontSize="11"/></StackPanel></Border>
-          </UniformGrid>
-          <Border Style="{StaticResource Panel}" Margin="0,0,0,20">
-            <StackPanel>
-              <Grid><TextBlock Text="The rhythm of your system" Style="{StaticResource SectionTitle}"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><TextBlock Text="●  CPU" Foreground="{StaticResource AccentBrush}" Margin="0,2,20,0"/><TextBlock Text="●  Memory" Foreground="#B8A5FA" Margin="0,2,0,0"/></StackPanel></Grid>
-              <TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,16"/>
-              <Grid><charts:HistoryChart Values="{Binding CpuHistory}" SecondaryValues="{Binding MemoryHistory}" Stroke="{StaticResource AccentBrush}" Height="175" Margin="0,0,31,0" AutomationProperties.Name="CPU and memory history, 0 to 100 percent"/><TextBlock Text="100%" Style="{StaticResource Muted}" FontSize="10" HorizontalAlignment="Right"/><TextBlock Text="0%" Style="{StaticResource Muted}" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid>
-            </StackPanel>
+      <!-- Individual histories keep the readings and their context together. -->
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                    Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=0}">
+        <StackPanel Margin="0,0,4,0">
+          <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,0,12">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Border Padding="16,14">
+                <StackPanel>
+                  <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding Architecture}" Style="{StaticResource Muted}" FontSize="10"/><TextBlock Text="CPU" Style="{StaticResource Label}"/></DockPanel>
+                  <TextBlock AutomationProperties.AutomationId="LiveCpu" Text="{Binding Cpu}" Style="{StaticResource Metric}" Foreground="{StaticResource AccentBrush}"/>
+                  <TextBlock Text="{Binding CoreCount}" Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,10"/>
+                  <charts:HistoryChart Values="{Binding CpuHistory}" Stroke="{StaticResource AccentBrush}" ShowGrid="False" Height="62" AutomationProperties.Name="CPU history"/>
+                </StackPanel>
+              </Border>
+              <Border Grid.Column="1" Background="{StaticResource LineBrush}" Margin="0,16"/>
+              <Border Grid.Column="2" Padding="16,14">
+                <StackPanel>
+                  <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding TotalMemory}" Style="{StaticResource Muted}" FontSize="10"/><TextBlock Text="MEMORY" Style="{StaticResource Label}"/></DockPanel>
+                  <TextBlock AutomationProperties.AutomationId="LiveMemory" Text="{Binding Memory}" Style="{StaticResource Metric}" Foreground="{StaticResource MemoryBrush}"/>
+                  <TextBlock Text="{Binding MemoryCaption}" Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,10"/>
+                  <charts:HistoryChart Values="{Binding MemoryHistory}" Stroke="{StaticResource MemoryBrush}" ShowGrid="False" Height="62" AutomationProperties.Name="Memory history"/>
+                </StackPanel>
+              </Border>
+            </Grid>
           </Border>
-          <Grid Margin="0,0,0,20">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions>
-            <Border Style="{StaticResource Panel}" Margin="0,0,16,0">
+          <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Panel}" Padding="14,10" ToolTip="Throughput across active network adapters. Virtual adapters may count traffic twice.">
+              <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="NETWORK" Style="{StaticResource Label}" Margin="0,0,0,3"/><TextBlock Text="{Binding Download}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource NetworkBrush}"/></StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="8,0,0,2"><TextBlock Text="UPLOAD" Style="{StaticResource Muted}" FontSize="9" HorizontalAlignment="Right" Margin="0,0,0,3"/><TextBlock Text="{Binding Upload}" Style="{StaticResource Muted}" FontSize="11" HorizontalAlignment="Right"/></StackPanel>
+              </Grid>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="14,10">
+              <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="POWER" Style="{StaticResource Label}" Margin="0,0,0,3"/><TextBlock Text="{Binding Battery}" FontSize="18" FontWeight="SemiBold"/></StackPanel>
+                <TextBlock Grid.Column="1" Text="{Binding Power}" Style="{StaticResource Muted}" FontSize="11" VerticalAlignment="Bottom" Margin="10,0,0,2" MaxWidth="150"/>
+              </Grid>
+            </Border>
+          </Grid>
+          <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Panel}" Padding="14,12">
               <StackPanel>
-                <DockPanel Margin="0,0,0,12"><Button DockPanel.Dock="Right" Content="View all  →" Click="ViewProcesses_Click" Padding="10,5"/><TextBlock Text="Busiest right now" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/></DockPanel>
-                <ItemsControl ItemsSource="{Binding TopProcesses}"><ItemsControl.ItemTemplate><DataTemplate><Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="90"/><ColumnDefinition Width="70"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Architecture}" Style="{StaticResource Muted}" FontSize="10" Margin="0,3,0,0"/></StackPanel><TextBlock Grid.Column="1" Text="{Binding MemoryText}" Style="{StaticResource Muted}" HorizontalAlignment="Right" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding CpuText}" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/></Grid></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                <DockPanel Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="All processes →" Style="{StaticResource QuietButton}" Click="ViewProcesses_Click" FontSize="10" Padding="0,0,0,2"/><TextBlock Text="Top CPU" Style="{StaticResource SectionTitle}" Margin="0"/></DockPanel>
+                <ItemsControl AutomationProperties.AutomationId="TopCpuList" ItemsSource="{Binding TopProcesses}" ItemTemplate="{StaticResource TopCpuTemplate}"/>
               </StackPanel>
             </Border>
-            <StackPanel Grid.Column="1">
-              <Border Style="{StaticResource Panel}" BorderBrush="#355447" Margin="0,0,0,16"><StackPanel><TextBlock Text="A LITTLE INSIGHT" Style="{StaticResource Label}" Foreground="{StaticResource AccentBrush}"/><TextBlock Text="{Binding InsightTitle}" Style="{StaticResource SectionTitle}"/><TextBlock Text="{Binding InsightBody}" Style="{StaticResource Muted}" LineHeight="21"/><Button Content="Explore processes  →" Click="ViewProcesses_Click" HorizontalAlignment="Left" Margin="0,16,0,0"/></StackPanel></Border>
-              <Border Style="{StaticResource Panel}"><StackPanel><TextBlock Text="Accelerators" Style="{StaticResource SectionTitle}"/><TextBlock Text="GPU / NPU  —  unavailable" Style="{StaticResource Muted}"/><TextBlock Text="This collector does not read Adreno GPU or Hexagon NPU utilization. No guessed values." Style="{StaticResource Muted}" FontSize="11" LineHeight="18" Margin="0,8,0,0"/></StackPanel></Border>
-            </StackPanel>
+            <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="14,12">
+              <StackPanel>
+                <DockPanel Margin="0,0,0,6"><TextBlock DockPanel.Dock="Right" Text="Working set" Style="{StaticResource Muted}" FontSize="10"/><TextBlock Text="Top memory" Style="{StaticResource SectionTitle}" Margin="0"/></DockPanel>
+                <ItemsControl AutomationProperties.AutomationId="TopMemoryList" ItemsSource="{Binding TopMemoryProcesses}" ItemTemplate="{StaticResource TopMemoryTemplate}"/>
+              </StackPanel>
+            </Border>
           </Grid>
+          <DockPanel Margin="1,0,1,0"><TextBlock DockPanel.Dock="Right" Text="{Binding ProcessCount}" Style="{StaticResource Muted}" FontSize="10"/><TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}" FontSize="10"/></DockPanel>
         </StackPanel>
       </ScrollViewer>
 
-      <!-- PROCESSES -->
+      <!-- A denser process table with an inspector that expands only for a selection. -->
       <Grid Grid.Row="1" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=1}">
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Grid Margin="0,0,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="180"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="SearchBox" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search process name, PID, or executable path (Ctrl+F)" AutomationProperties.Name="Search processes" Margin="0,0,12,0"/><ComboBox Grid.Column="1" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}" AutomationProperties.Name="Process filter" Margin="0,0,12,0"/><Button Grid.Column="2" Content="Export CSV" Click="Export_Click" ToolTip="Export the currently filtered process list"/></Grid>
+        <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="152"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBox x:Name="SearchBox" Tag="Search name, PID or path" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Search processes" ToolTip="Search processes (Ctrl+F)" Margin="0,0,8,0"/>
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}" AutomationProperties.Name="Process filter" Margin="0,0,8,0"/>
+          <Button Grid.Column="2" Content="Export CSV" Click="Export_Click"/>
+        </Grid>
         <Border Grid.Row="1" Style="{StaticResource Panel}" Padding="0" ClipToBounds="True">
-          <Grid><DataGrid x:Name="ProcessGrid" ItemsSource="{Binding Processes}" SelectedItem="{Binding Selected}" Sorting="ProcessGrid_Sorting" AutomationProperties.Name="Running processes">
-            <DataGrid.Columns>
-              <DataGridTextColumn Header="Process" Binding="{Binding Name}" SortMemberPath="Name" Width="*" MinWidth="140"/>
-              <DataGridTextColumn Header="PID" Binding="{Binding Pid}" SortMemberPath="Pid" Width="65"/>
-              <DataGridTextColumn Header="CPU" Binding="{Binding CpuText}" SortMemberPath="Cpu" Width="80"/>
-              <DataGridTextColumn Header="Memory" Binding="{Binding MemoryText}" SortMemberPath="Memory" Width="100"/>
-              <DataGridTextColumn Header="I/O /s" Binding="{Binding IoText}" SortMemberPath="IoBytesPerSecond" Width="100"/>
-              <DataGridTextColumn Header="Architecture" Binding="{Binding Architecture}" Width="120"/>
-              <DataGridTextColumn Header="Access" Binding="{Binding Status}" Width="85"/>
-            </DataGrid.Columns>
-          </DataGrid>
-          <TextBlock Text="No processes match this search." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Processes.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+          <Grid>
+            <DataGrid x:Name="ProcessGrid" ItemsSource="{Binding Processes}" SelectedItem="{Binding Selected}" Sorting="ProcessGrid_Sorting" AutomationProperties.Name="Running processes">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Process" Binding="{Binding Name}" SortMemberPath="Name" Width="*" MinWidth="120"/>
+                <DataGridTextColumn Header="PID" Binding="{Binding Pid}" SortMemberPath="Pid" Width="62"/>
+                <DataGridTextColumn Header="CPU" Binding="{Binding CpuText}" SortMemberPath="Cpu" Width="72"/>
+                <DataGridTextColumn Header="Memory" Binding="{Binding MemoryText}" SortMemberPath="Memory" Width="92"/>
+                <DataGridTextColumn Header="I/O /s" Binding="{Binding IoText}" SortMemberPath="IoBytesPerSecond" Width="92"/>
+                <DataGridTextColumn Header="Architecture" Binding="{Binding Architecture}" Width="110"/>
+                <DataGridTextColumn Header="Access" Binding="{Binding Status}" Width="84"/>
+              </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="No processes match this search." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" IsHitTestVisible="False">
+              <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Processes.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+            </TextBlock>
           </Grid>
         </Border>
-        <Border Grid.Row="2" Style="{StaticResource Panel}" Margin="0,16,0,0" Padding="18,14">
-          <StackPanel>
-            <DockPanel Margin="0,0,0,10"><TextBlock DockPanel.Dock="Right" Text="{Binding FilterCount}" Style="{StaticResource Muted}" FontSize="11"/><TextBlock Text="Selected process" FontWeight="SemiBold"/></DockPanel>
-            <TextBlock Text="{Binding Selected.Name, TargetNullValue='Select a process to inspect it'}" FontSize="17" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding Selected.Path, TargetNullValue='Executable path unavailable or no selection'}" Style="{StaticResource Muted}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" ToolTip="{Binding Selected.Path}" FontSize="11" Margin="0,0,0,12"/>
-            <TextBlock Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,12"><Run Text="CPU  "/><Run Text="{Binding Selected.CpuText, TargetNullValue='—', Mode=OneWay}"/><Run Text="     Memory  "/><Run Text="{Binding Selected.MemoryText, TargetNullValue='—', Mode=OneWay}"/><Run Text="     I/O  "/><Run Text="{Binding Selected.IoText, TargetNullValue='—', Mode=OneWay}"/><Run Text="     Threads  "/><Run Text="{Binding Selected.Threads, TargetNullValue='—', Mode=OneWay}"/></TextBlock>
-            <DockPanel>
-              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="Open folder" Click="OpenFolder_Click" IsEnabled="{Binding HasSelection}" Margin="0,0,8,0"/><Button Content="Lower priority" Click="LowerPriority_Click" IsEnabled="{Binding HasSelection}" Margin="0,0,8,0" ToolTip="Set Below Normal CPU scheduling priority. This is not Windows Efficiency Mode."/><Button Content="End process…" Click="EndProcess_Click" Foreground="#FFAAA7" BorderBrush="#72423F" IsEnabled="{Binding HasSelection}"/></StackPanel>
-              <TextBlock Text="{Binding Selected.Architecture}" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
-            </DockPanel>
-          </StackPanel>
-        </Border>
+        <StackPanel Grid.Row="2" Margin="0,10,0,0">
+          <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding FilterCount}" Style="{StaticResource Muted}" FontSize="10"/><TextBlock Text="Select a process to inspect its details." Style="{StaticResource Muted}" FontSize="10"/></DockPanel>
+          <Border Style="{StaticResource Panel}" Margin="0,8,0,0" Padding="14,12" Visibility="{Binding HasSelection, Converter={StaticResource BooleanVisibility}}">
+            <StackPanel>
+              <DockPanel Margin="0,0,0,5"><TextBlock DockPanel.Dock="Right" Text="{Binding Selected.Architecture}" Foreground="{StaticResource AccentBrush}" FontSize="11"/><TextBlock Text="{Binding Selected.Name}" FontSize="15" FontWeight="SemiBold"/></DockPanel>
+              <TextBlock Text="{Binding Selected.Path, TargetNullValue='Executable path unavailable'}" Style="{StaticResource Muted}" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Selected.Path}" Margin="0,0,0,10"/>
+              <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="Open folder" Click="OpenFolder_Click" Margin="0,0,6,0"/><Button Content="Lower priority" Click="LowerPriority_Click" Margin="0,0,6,0" ToolTip="Set Below Normal CPU scheduling priority"/><Button Content="End process…" Click="EndProcess_Click" Foreground="#F4A29D" BorderBrush="#70433F"/></StackPanel>
+                <TextBlock Style="{StaticResource Muted}" FontSize="10" VerticalAlignment="Center" Margin="0,0,8,0"><Run Text="Threads  "/><Run Text="{Binding Selected.Threads, TargetNullValue='—', Mode=OneWay}"/></TextBlock>
+              </DockPanel>
+            </StackPanel>
+          </Border>
+        </StackPanel>
       </Grid>
 
-      <!-- MEMORY -->
-      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=2}">
-        <StackPanel Margin="0,0,8,0">
-          <Border Style="{StaticResource Panel}" Margin="0,0,0,20"><StackPanel><TextBlock Text="PHYSICAL MEMORY IN USE" Style="{StaticResource Label}"/><DockPanel><TextBlock Text="{Binding MemoryPercent}" DockPanel.Dock="Right" FontSize="32" Foreground="#B8A5FA"/><TextBlock Text="{Binding Memory}" FontSize="48" FontWeight="SemiBold"/></DockPanel><TextBlock Text="{Binding MemoryDetail}" Style="{StaticResource Muted}" Margin="0,8,0,20"/><ProgressBar Value="{Binding MemoryValue, Mode=OneWay}" Maximum="100" Height="12" Foreground="#B8A5FA" Background="#30303D" BorderThickness="0" AutomationProperties.Name="Physical memory utilization"/><UniformGrid Columns="2" Margin="0,25,0,0"><StackPanel><TextBlock Text="AVAILABLE" Style="{StaticResource Label}"/><TextBlock Text="{Binding AvailableMemory}" FontSize="24" Foreground="{StaticResource AccentBrush}"/></StackPanel><StackPanel><TextBlock Text="TOTAL USABLE" Style="{StaticResource Label}"/><TextBlock Text="{Binding TotalMemory}" FontSize="24"/></StackPanel></UniformGrid></StackPanel></Border>
-          <Border Style="{StaticResource Panel}" Margin="0,0,0,20"><StackPanel><TextBlock Text="Memory over this session" Style="{StaticResource SectionTitle}"/><charts:HistoryChart Values="{Binding MemoryHistory}" Stroke="#B8A5FA" Height="190" Margin="0,18,0,12"/><TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}" FontSize="11"/></StackPanel></Border>
-          <Border Style="{StaticResource Panel}"><StackPanel><TextBlock Text="What these numbers mean" Style="{StaticResource SectionTitle}"/><TextBlock Style="{StaticResource Muted}" LineHeight="23" Text="In use = total usable physical RAM minus available RAM. Windows includes reclaimable standby pages in available memory.&#10;&#10;Process memory is each process’s working set. Shared pages can appear in several processes, so adding the process column will not equal system memory in use. A large working set alone is not a memory leak.&#10;&#10;Available RAM is useful context, not a promise that an AI model or workload will fit. This version does not measure commit pressure or memory compression."/><Button Content="Find memory-heavy processes  →" Click="HighMemory_Click" HorizontalAlignment="Left" Margin="0,18,0,0"/></StackPanel></Border>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=2}">
+        <StackPanel Margin="0,0,4,0">
+          <Border Style="{StaticResource Panel}" Margin="0,0,0,12">
+            <StackPanel>
+              <TextBlock Text="PHYSICAL MEMORY IN USE" Style="{StaticResource Label}"/>
+              <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding MemoryPercent}" FontSize="28" Foreground="{StaticResource MemoryBrush}"/><TextBlock Text="{Binding Memory}" FontSize="38" FontWeight="SemiBold"/></DockPanel>
+              <TextBlock Text="{Binding MemoryDetail}" Style="{StaticResource Muted}" FontSize="11" Margin="0,4,0,14"/>
+              <ProgressBar Value="{Binding MemoryValue, Mode=OneWay}" Maximum="100" Height="7" AutomationProperties.Name="Physical memory utilization"/>
+              <UniformGrid Columns="2" Margin="0,18,0,0"><StackPanel><TextBlock Text="Available" Style="{StaticResource Label}"/><TextBlock Text="{Binding AvailableMemory}" FontSize="22" Foreground="{StaticResource MemoryBrush}"/></StackPanel><StackPanel><TextBlock Text="Total usable" Style="{StaticResource Label}"/><TextBlock Text="{Binding TotalMemory}" FontSize="22"/></StackPanel></UniformGrid>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource Panel}" Margin="0,0,0,12"><StackPanel><TextBlock Text="Memory history" Style="{StaticResource SectionTitle}"/><charts:HistoryChart Values="{Binding MemoryHistory}" Stroke="{StaticResource MemoryBrush}" Height="140" Margin="0,8,0,10"/><TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}" FontSize="10"/></StackPanel></Border>
+          <Border Style="{StaticResource Panel}"><StackPanel><TextBlock Text="Understanding memory" Style="{StaticResource SectionTitle}"/><TextBlock Style="{StaticResource Muted}" LineHeight="20" Text="Available RAM includes reclaimable standby pages. In use is total usable RAM minus available RAM.&#10;&#10;Process working sets include shared pages, so adding them can double count memory. A large working set alone does not prove a memory leak."/><Button Content="Find memory-heavy processes →" Click="HighMemory_Click" HorizontalAlignment="Left" Margin="0,12,0,0"/></StackPanel></Border>
         </StackPanel>
       </ScrollViewer>
 
-      <!-- HISTORY -->
-      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=3}">
-        <StackPanel Margin="0,0,8,0">
-          <UniformGrid Columns="3" Margin="0,0,-16,20"><Border Style="{StaticResource Panel}" Margin="0,0,16,0"><StackPanel><TextBlock Text="AVERAGE CPU" Style="{StaticResource Label}"/><TextBlock Text="{Binding CpuAverage}" Style="{StaticResource Metric}" Foreground="{StaticResource AccentBrush}"/></StackPanel></Border><Border Style="{StaticResource Panel}" Margin="0,0,16,0"><StackPanel><TextBlock Text="PEAK CPU" Style="{StaticResource Label}"/><TextBlock Text="{Binding CpuPeak}" Style="{StaticResource Metric}"/></StackPanel></Border><Border Style="{StaticResource Panel}" Margin="0,0,16,0"><StackPanel><TextBlock Text="PEAK MEMORY" Style="{StaticResource Label}"/><TextBlock Text="{Binding MemoryPeak}" Style="{StaticResource Metric}" Foreground="#B8A5FA"/></StackPanel></Border></UniformGrid>
-          <Border Style="{StaticResource Panel}"><StackPanel><TextBlock Text="CPU + memory · 0–100%" Style="{StaticResource SectionTitle}"/><charts:HistoryChart Values="{Binding CpuHistory}" SecondaryValues="{Binding MemoryHistory}" Stroke="{StaticResource AccentBrush}" Height="300" Margin="0,18,0,18"/><TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}"/><StackPanel Orientation="Horizontal" Margin="0,12,0,0"><TextBlock Text="●  CPU" Foreground="{StaticResource AccentBrush}" Margin="0,0,24,0"/><TextBlock Text="●  Memory" Foreground="#B8A5FA"/></StackPanel></StackPanel></Border>
-          <TextBlock Text="The last 120 samples stay in memory. Chart spacing is per sample; pauses and interval changes can make elapsed time uneven. Averages are per sample. Missing readings leave gaps. History clears when you quit." Style="{StaticResource Muted}" LineHeight="21" Margin="0,18,0,0"/>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=3}">
+        <StackPanel Margin="0,0,4,0">
+          <UniformGrid Columns="3" Margin="0,0,-12,12">
+            <Border Style="{StaticResource Panel}" Margin="0,0,12,0"><StackPanel><TextBlock Text="Average CPU" Style="{StaticResource Label}"/><TextBlock Text="{Binding CpuAverage}" Style="{StaticResource Metric}" Foreground="{StaticResource AccentBrush}"/></StackPanel></Border>
+            <Border Style="{StaticResource Panel}" Margin="0,0,12,0"><StackPanel><TextBlock Text="Peak CPU" Style="{StaticResource Label}"/><TextBlock Text="{Binding CpuPeak}" Style="{StaticResource Metric}"/></StackPanel></Border>
+            <Border Style="{StaticResource Panel}" Margin="0,0,12,0"><StackPanel><TextBlock Text="Peak memory" Style="{StaticResource Label}"/><TextBlock Text="{Binding MemoryPeak}" Style="{StaticResource Metric}" Foreground="{StaticResource MemoryBrush}"/></StackPanel></Border>
+          </UniformGrid>
+          <Border Style="{StaticResource Panel}"><StackPanel>
+            <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><TextBlock Text="● CPU" Foreground="{StaticResource AccentBrush}" FontSize="11" Margin="0,0,16,0"/><TextBlock Text="● Memory" Foreground="{StaticResource MemoryBrush}" FontSize="11"/></StackPanel><TextBlock Text="CPU &amp; memory · 0–100%" Style="{StaticResource SectionTitle}"/></DockPanel>
+            <charts:HistoryChart Values="{Binding CpuHistory}" SecondaryValues="{Binding MemoryHistory}" Stroke="{StaticResource AccentBrush}" SecondaryStroke="{StaticResource MemoryBrush}" Height="240" Margin="0,12,0,14"/>
+            <TextBlock Text="{Binding HistoryRange}" Style="{StaticResource Muted}" FontSize="10"/>
+          </StackPanel></Border>
+          <TextBlock Text="Last 120 samples. Chart spacing and averages are per sample; pauses and interval changes can make elapsed time uneven. Missing readings leave gaps. History clears when you quit." Style="{StaticResource Muted}" FontSize="11" LineHeight="19" Margin="0,12,0,0"/>
         </StackPanel>
       </ScrollViewer>
 
-      <!-- SETTINGS -->
-      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=4}">
-        <StackPanel Margin="0,0,8,0">
-          <Border Style="{StaticResource Panel}" Margin="0,0,0,20"><StackPanel><TextBlock Text="Make yourself at home" Style="{StaticResource SectionTitle}"/><Grid Margin="0,18,0,18"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Refresh interval (seconds)"/><TextBlock Text="2 seconds is a good balance for everyday use." Style="{StaticResource Muted}" FontSize="11" Margin="0,6,20,0"/></StackPanel><ComboBox Grid.Column="1" ItemsSource="{Binding Intervals}" SelectedItem="{Binding Interval}" AutomationProperties.Name="Refresh interval in seconds"/></Grid><CheckBox Content="Keep ARMpulse above other windows" IsChecked="{Binding AlwaysOnTop}" Margin="0,0,0,14"/><TextBlock Text="Preferences are saved locally. Sampling slows to at least 5 seconds while minimized." Style="{StaticResource Muted}" FontSize="11"/></StackPanel></Border>
-          <Border Style="{StaticResource Panel}" Margin="0,0,0,20"><StackPanel><TextBlock Text="Built for your Windows on ARM PC" Style="{StaticResource SectionTitle}"/><TextBlock Text="ARMpulse 0.1.2 · native WPF / .NET 10" Margin="0,8,0,8"/><TextBlock Text="{Binding Runtime}" Style="{StaticResource Muted}"/><TextBlock Text="{Binding ArmCount}" Margin="0,20,0,6" Foreground="{StaticResource AccentBrush}"/><TextBlock Text="{Binding EmulatedCount}" Style="{StaticResource Muted}"/><TextBlock Text="ARM64EC apps can mix native and emulated code and may be reported as x64 on ARM. Labels describe the Windows process machine type, not every module inside it." Style="{StaticResource Muted}" FontSize="11" LineHeight="19" Margin="0,12,0,0"/></StackPanel></Border>
-          <Border Style="{StaticResource Panel}"><StackPanel><TextBlock Text="Honest numbers. No background surprises." Style="{StaticResource SectionTitle}"/><TextBlock Style="{StaticResource Muted}" LineHeight="23" Text="No accounts, analytics, remote uploads, drivers, startup entries, or background service. Closing the window quits the app. CSV exports happen only when you ask.&#10;&#10;CPU is normalized across all logical processors. I/O includes process file and device reads/writes; it is not a disk-only or per-process network counter. Restricted processes display unavailable values.&#10;&#10;This version does not expose GPU/NPU utilization, temperature, fan speed, or per-core load. Lower priority changes CPU scheduling to Below Normal; it is not EcoQoS or a power cap.&#10;&#10;Ctrl+F: find a process · Ctrl+Space: pause/resume · F5: refresh (when live)."/><TextBlock Text="Inspired by SiliconPulse. Independently implemented for Windows." Style="{StaticResource Muted}" FontSize="11" Margin="0,20,0,0"/></StackPanel></Border>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding PageIndex, Converter={StaticResource PageVisibility}, ConverterParameter=4}">
+        <StackPanel Margin="0,0,4,0">
+          <Border Style="{StaticResource Panel}" Margin="0,0,0,12"><StackPanel>
+            <TextBlock Text="Monitoring" Style="{StaticResource SectionTitle}"/>
+            <Grid Margin="0,10,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="136"/></Grid.ColumnDefinitions>
+              <StackPanel><TextBlock Text="Refresh interval"/><TextBlock Text="Seconds between samples. 2s is a balanced default." Style="{StaticResource Muted}" FontSize="11" Margin="0,5,16,0"/></StackPanel>
+              <ComboBox Grid.Column="1" ItemsSource="{Binding Intervals}" SelectedItem="{Binding Interval}" AutomationProperties.Name="Refresh interval in seconds"/>
+            </Grid>
+            <CheckBox Content="Keep ARMpulse above other windows" IsChecked="{Binding AlwaysOnTop}"/>
+            <TextBlock Text="Preferences stay on this PC. Sampling slows to at least 5s while minimized." Style="{StaticResource Muted}" FontSize="11" Margin="0,14,0,0"/>
+          </StackPanel></Border>
+          <Border Style="{StaticResource Panel}" Margin="0,0,0,12"><StackPanel>
+            <TextBlock Text="{Binding AppVersion}" Style="{StaticResource SectionTitle}"/>
+            <TextBlock Text="{Binding Runtime}" Style="{StaticResource Muted}" FontSize="11"/>
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,8"><TextBlock Text="{Binding ArmCount}" Foreground="{StaticResource MemoryBrush}" Margin="0,0,20,0"/><TextBlock Text="{Binding EmulatedCount}" Style="{StaticResource Muted}"/></StackPanel>
+            <TextBlock Text="Architecture describes the Windows process type. ARM64EC apps may appear as x64 on ARM and can mix native and emulated code." Style="{StaticResource Muted}" FontSize="11" LineHeight="19"/>
+          </StackPanel></Border>
+          <Border Style="{StaticResource Panel}"><StackPanel>
+            <TextBlock Text="Local and transparent" Style="{StaticResource SectionTitle}"/>
+            <TextBlock Style="{StaticResource Muted}" LineHeight="20" Text="No accounts, uploads, analytics, background service or automatic startup. Closing the window quits the app. CSV exports include executable paths and are written only when you ask.&#10;&#10;CPU is normalized to total machine capacity. Process I/O includes file and device reads/writes. Restricted values display a dash. GPU/NPU utilization, temperature and memory compression are not supported in this version.&#10;&#10;Lower priority adjusts CPU scheduling, not Windows Efficiency Mode.&#10;&#10;Ctrl+F  Search processes     Ctrl+Space  Pause / resume     F5  Refresh"/>
+            <TextBlock Text="Inspired by SiliconPulse. Built for Windows." Style="{StaticResource Muted}" FontSize="10" Margin="0,16,0,0"/>
+          </StackPanel></Border>
         </StackPanel>
       </ScrollViewer>
-      <DockPanel Grid.Row="2" Margin="0,14,0,0"><TextBlock Text="{Binding LastUpdate}" DockPanel.Dock="Right" Style="{StaticResource Muted}" FontSize="10"/><TextBlock AutomationProperties.AutomationId="MonitoringStatus" Text="{Binding Message}" Foreground="{StaticResource MutedBrush}" FontSize="10" TextTrimming="CharacterEllipsis" Margin="0,0,16,0"/></DockPanel>
+
+      <DockPanel Grid.Row="2" Margin="0,10,0,0">
+        <TextBlock DockPanel.Dock="Right" Text="{Binding LastUpdate}" Style="{StaticResource Muted}" FontSize="10"/>
+        <TextBlock AutomationProperties.AutomationId="MonitoringStatus" Text="{Binding Message}" Foreground="{StaticResource MutedBrush}" FontSize="10" TextTrimming="CharacterEllipsis" Margin="0,0,14,0"/>
+      </DockPanel>
     </Grid>
   </Grid>
 </Window>

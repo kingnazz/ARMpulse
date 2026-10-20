@@ -42,7 +42,9 @@ jobs:
             --notes-file docs/RELEASE_NOTES.md `
             artifacts/ARMpulse-win-arm64.zip artifacts/ARMpulse-win-arm64.zip.sha256 `
             artifacts/ARMpulse-win-x64.zip artifacts/ARMpulse-win-x64.zip.sha256 `
-            artifacts/ui-smoke/overview.png artifacts/windows-smoke.json
+            artifacts/ui-smoke/overview.png artifacts/ui-smoke/processes.png `
+            artifacts/ui-smoke/memory.png artifacts/ui-smoke/history.png `
+            artifacts/ui-smoke/settings.png artifacts/windows-smoke.json
           if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed.' }
       - name: Mark the broken first preview as superseded
         if: github.ref_name == 'v0.1.2'

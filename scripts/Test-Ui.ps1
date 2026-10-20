@@ -53,6 +53,37 @@ function Wait-LiveTelemetry {
     throw 'Live CPU and memory values did not populate.'
 }
 
+function Select-ComboOption([string]$Name, [string]$Option) {
+    $combo = Find-Element $Name ([System.Windows.Automation.ControlType]::ComboBox)
+    $expand = [System.Windows.Automation.ExpandCollapsePattern]$combo.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+    $expand.Expand()
+    $condition = [System.Windows.Automation.AndCondition]::new(
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::NameProperty, $Option),
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem))
+    $deadline = [DateTime]::UtcNow.AddSeconds(10)
+    do {
+        $item = $combo.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+        if (!$item) { $item = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition) }
+        if ($item) {
+            ([System.Windows.Automation.SelectionItemPattern]$item.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)).Select()
+            if ($expand.Current.ExpandCollapseState -eq [System.Windows.Automation.ExpandCollapseState]::Expanded) { $expand.Collapse() }
+            return
+        }
+        Start-Sleep -Milliseconds 100
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw "ComboBox option unavailable: $Name / $Option"
+}
+
+function Save-Screenshot([string]$FileName) {
+    $bounds = $root.Current.BoundingRectangle
+    $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        $graphics.CopyFromScreen([int]$bounds.Left, [int]$bounds.Top, 0, 0, $bitmap.Size)
+        $bitmap.Save((Join-Path $outputPath $FileName))
+    } finally { $graphics.Dispose(); $bitmap.Dispose() }
+}
+
 try {
     $deadline = [DateTime]::UtcNow.AddSeconds(30)
     do {
@@ -65,11 +96,24 @@ try {
         Start-Sleep -Milliseconds 200
     } while ([DateTime]::UtcNow -lt $deadline)
     if (!$root) { throw 'No application window.' }
-    Find-Element 'Your Surface, at a glance.' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Find-Element 'Overview' ([System.Windows.Automation.ControlType]::Text) | Out-Null
     $root.SetFocus()
     Wait-LiveTelemetry
     $checks.Add('Window starts and overview renders')
     $checks.Add('Live CPU and memory populate without sampling errors')
+    Find-Element 'Top CPU' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Find-Element 'Top memory' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Save-Screenshot 'overview.png'
+
+    $topList = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'TopCpuList'))
+    if (!$topList) { throw 'Top CPU list not exposed to accessibility.' }
+    $topProcess = $topList.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button))
+    if (!$topProcess) { throw 'Top CPU list has no process actions.' }
+    ([System.Windows.Automation.InvokePattern]$topProcess.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)).Invoke()
+    Find-Element 'Open folder' ([System.Windows.Automation.ControlType]::Button) | Out-Null
+    $checks.Add('Clicking a top consumer opens its process inspector')
 
     Select-Page 'Processes'
     $search = Find-Element 'Search processes' ([System.Windows.Automation.ControlType]::Edit)
@@ -78,6 +122,9 @@ try {
     Find-Element 'No processes match this search.' ([System.Windows.Automation.ControlType]::Text) | Out-Null
     $value.SetValue('')
     $checks.Add('Process search updates the visible results')
+    Select-ComboOption 'Process filter' 'High memory'
+    Select-ComboOption 'Process filter' 'All processes'
+    $checks.Add('Themed process filter supports selection')
 
     foreach ($header in @('Memory', 'CPU')) {
         $column = Find-Element $header ([System.Windows.Automation.ControlType]::HeaderItem)
@@ -85,28 +132,30 @@ try {
     }
     $checks.Add('Numeric process column sorting is interactive')
     Invoke-Button 'Pause'
-    Find-Element 'PAUSED' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Find-Element 'Paused' ([System.Windows.Automation.ControlType]::Text) | Out-Null
     Invoke-Button 'Resume'
     $checks.Add('Pause and resume work')
+    Save-Screenshot 'processes.png'
 
     Select-Page 'Memory'
     Find-Element 'PHYSICAL MEMORY IN USE' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Save-Screenshot 'memory.png'
     Select-Page 'History'
     Find-Element 'Session history' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Save-Screenshot 'history.png'
     Select-Page 'Settings'
     Find-Element 'Refresh interval in seconds' ([System.Windows.Automation.ControlType]::ComboBox) | Out-Null
+    Select-ComboOption 'Refresh interval in seconds' '5'
+    Find-Element 'Live · 5s' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    Select-ComboOption 'Refresh interval in seconds' '2'
+    $checks.Add('Themed sampling control changes the live interval')
+    Save-Screenshot 'settings.png'
     $checks.Add('Memory, history, and settings pages render')
     Select-Page 'Overview'
     Wait-LiveTelemetry
     Start-Sleep -Seconds 3
     Wait-LiveTelemetry
-    $bounds = $root.Current.BoundingRectangle
-    $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
-    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    try {
-        $graphics.CopyFromScreen([int]$bounds.Left, [int]$bounds.Top, 0, 0, $bitmap.Size)
-        $bitmap.Save((Join-Path $outputPath 'overview.png'))
-    } finally { $graphics.Dispose(); $bitmap.Dispose() }
+    Save-Screenshot 'overview.png'
     $app.CloseMainWindow() | Out-Null
     if (!$app.WaitForExit(10000)) { throw 'App did not quit after its window closed.' }
     if ($app.ExitCode -ne 0) { throw "App exited with $($app.ExitCode)." }

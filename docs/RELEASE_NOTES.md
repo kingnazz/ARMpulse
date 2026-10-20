@@ -1,6 +1,8 @@
 ARMpulse Windows preview: a native task manager for Windows on ARM.
 
-Version 0.1.2 fixes read-only display bindings, process-table refresh, window sizing, and dark theme application. Release publication requires real Windows telemetry, process controls, populated live dashboard readings, desktop navigation, and clean WPF binding diagnostics on an x64 Windows runner. Surface ARM64 hardware behavior still needs testing on your laptop.
+Version 0.2.0 refreshes the interface with a compact SiliconPulse-inspired layout: CPU and memory have individual charts, network and power use smaller readouts, and the top CPU and memory consumers are visible side by side. Click any top consumer to open its process inspector. The sidebar, denser process table, dark dropdowns, search field, progress bars, and scrollbars use a consistent visual system.
+
+Release publication requires real Windows telemetry, process controls, populated live readings, navigation, interactive dropdowns, and clean WPF binding diagnostics on an x64 Windows runner. Surface ARM64 hardware behavior still needs testing on your laptop. Actual screenshots from Windows CI are included with the release.
 
 **For your Snapdragon Surface Laptop, download `ARMpulse-win-arm64.zip`.** Extract it to a folder and run `ARMpulse.exe`. The runtime is included; you do not need to install .NET. `ARMpulse-win-x64.zip` is for Intel/AMD Windows PCs.
 
