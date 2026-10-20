@@ -4,6 +4,17 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, System.Drawing
+if (-not ('ARMpulseTests.Cursor' -as [type])) {
+    Add-Type -TypeDefinition @'
+using System.Runtime.InteropServices;
+namespace ARMpulseTests {
+    public static class Cursor {
+        [DllImport("user32.dll")]
+        public static extern bool SetCursorPos(int x, int y);
+    }
+}
+'@
+}
 New-Item -ItemType Directory -Force $Output | Out-Null
 $outputPath = (Resolve-Path $Output).Path
 $bindingLog = Join-Path $outputPath 'bindings.log'
@@ -75,9 +86,10 @@ function Select-ComboOption([string]$Name, [string]$Option) {
 }
 
 function Save-Screenshot([string]$FileName) {
-    # Let the compositor paint after automation switches a page or closes a popup.
-    Start-Sleep -Milliseconds 250
+    # Move away from hover targets and let page paint and tooltip dismissal finish.
     $bounds = $root.Current.BoundingRectangle
+    [ARMpulseTests.Cursor]::SetCursorPos([int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + 12)) | Out-Null
+    Start-Sleep -Milliseconds 400
     $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {
