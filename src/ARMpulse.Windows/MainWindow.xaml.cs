@@ -26,6 +26,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Width = Math.Max(MinWidth, Math.Min(1280, SystemParameters.WorkArea.Width - 32));
+        Height = Math.Max(MinHeight, Math.Min(860, SystemParameters.WorkArea.Height - 32));
         LoadSettings();
         DataContext = _vm;
         CollectionViewSource.GetDefaultView(_vm.Processes).SortDescriptions.Add(new(nameof(ProcessSample.Cpu), ListSortDirection.Descending));

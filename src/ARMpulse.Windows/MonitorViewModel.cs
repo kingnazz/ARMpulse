@@ -1,8 +1,6 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows.Data;
 using ARMpulse.Core;
 
 namespace ARMpulse.Windows;
@@ -30,7 +28,7 @@ internal sealed class MonitorViewModel : INotifyPropertyChanged
     public string Message { get => _message; set { _message = value; Notify(); } }
     public ProcessSample? Selected { get => _selected; set { _selected = value; Notify(); Notify(nameof(HasSelection)); } }
     public bool HasSelection => Selected is not null;
-    public ObservableCollection<ProcessSample> Processes { get; } = [];
+    public ProcessCollection Processes { get; } = [];
     public IEnumerable<ProcessSample> AllProcesses => _snapshot?.Processes ?? [];
     public ProcessSample[] TopProcesses => AllProcesses.OrderByDescending(p => p.Cpu ?? -1).Take(5).ToArray();
     public string[] Filters { get; } = ["All processes", "Compatibility", "High CPU", "High memory"];
@@ -99,11 +97,7 @@ internal sealed class MonitorViewModel : INotifyPropertyChanged
     private void RefreshProcesses()
     {
         var selection = Selected?.Identity;
-        using (CollectionViewSource.GetDefaultView(Processes).DeferRefresh())
-        {
-            Processes.Clear();
-            foreach (var process in ProcessQuery.Apply(AllProcesses, Query, Filter)) Processes.Add(process);
-        }
+        Processes.ReplaceAll(ProcessQuery.Apply(AllProcesses, Query, Filter));
         Selected = selection is { } id ? Processes.FirstOrDefault(p => p.Identity == id) : null;
         Notify(nameof(FilterCount));
     }

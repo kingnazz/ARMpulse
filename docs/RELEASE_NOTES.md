@@ -1,6 +1,6 @@
 ARMpulse Windows preview: a native task manager for Windows on ARM.
 
-Version 0.1.1 fixes a startup failure caused by writable WPF bindings on read-only display values. Release publication now requires the Windows collector, process-control, and desktop automation checks to pass on an x64 Windows runner. Surface ARM64 hardware behavior still needs testing on your laptop.
+Version 0.1.2 fixes read-only display bindings, process-table refresh, window sizing, and dark theme application. Release publication requires real Windows telemetry, process controls, populated live dashboard readings, desktop navigation, and clean WPF binding diagnostics on an x64 Windows runner. Surface ARM64 hardware behavior still needs testing on your laptop.
 
 **For your Snapdragon Surface Laptop, download `ARMpulse-win-arm64.zip`.** Extract it to a folder and run `ARMpulse.exe`. The runtime is included; you do not need to install .NET. `ARMpulse-win-x64.zip` is for Intel/AMD Windows PCs.
 

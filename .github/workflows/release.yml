@@ -45,7 +45,7 @@ jobs:
             artifacts/ui-smoke/overview.png artifacts/windows-smoke.json
           if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed.' }
       - name: Mark the broken first preview as superseded
-        if: github.ref_name == 'v0.1.1'
+        if: github.ref_name == 'v0.1.2'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,5 +53,9 @@ jobs:
         run: |
           gh release edit v0.1.0 --repo $env:RELEASE_REPO `
             --title 'ARMpulse v0.1.0 — superseded (startup bug)' `
+            --notes-file docs/SUPERSEDED_0.1.0.md
+          if ($LASTEXITCODE -ne 0) { throw 'Could not mark the old preview as superseded.' }
+          gh release edit v0.1.1 --repo $env:RELEASE_REPO `
+            --title 'ARMpulse v0.1.1 — superseded (sampling bug)' `
             --notes-file docs/SUPERSEDED_0.1.0.md
           if ($LASTEXITCODE -ne 0) { throw 'Could not mark the old preview as superseded.' }

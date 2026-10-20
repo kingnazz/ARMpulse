@@ -5,7 +5,7 @@
     <UseWPF>true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>ARMpulse</AssemblyName>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Description>A native Windows task manager for Windows on ARM.</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

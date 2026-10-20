@@ -36,6 +36,23 @@ function Invoke-Button([string]$Name) {
     ([System.Windows.Automation.InvokePattern]$button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)).Invoke()
 }
 
+function Wait-LiveTelemetry {
+    $deadline = [DateTime]::UtcNow.AddSeconds(25)
+    do {
+        if ($app.HasExited) { throw "App exited unexpectedly: $($app.ExitCode)" }
+        $status = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'MonitoringStatus'))
+        if ($status -and $status.Current.Name.StartsWith('Sampling failed:')) { throw $status.Current.Name }
+        $cpu = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'LiveCpu'))
+        $memory = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'LiveMemory'))
+        if ($cpu -and $memory -and $cpu.Current.Name -match '^\d+([.,]\d+)?%$' -and $memory.Current.Name -match '\d.*[KMGT]B$') { return }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw 'Live CPU and memory values did not populate.'
+}
+
 try {
     $deadline = [DateTime]::UtcNow.AddSeconds(30)
     do {
@@ -49,7 +66,10 @@ try {
     } while ([DateTime]::UtcNow -lt $deadline)
     if (!$root) { throw 'No application window.' }
     Find-Element 'Your Surface, at a glance.' ([System.Windows.Automation.ControlType]::Text) | Out-Null
+    $root.SetFocus()
+    Wait-LiveTelemetry
     $checks.Add('Window starts and overview renders')
+    $checks.Add('Live CPU and memory populate without sampling errors')
 
     Select-Page 'Processes'
     $search = Find-Element 'Search processes' ([System.Windows.Automation.ControlType]::Edit)
@@ -77,7 +97,9 @@ try {
     Find-Element 'Refresh interval in seconds' ([System.Windows.Automation.ControlType]::ComboBox) | Out-Null
     $checks.Add('Memory, history, and settings pages render')
     Select-Page 'Overview'
+    Wait-LiveTelemetry
     Start-Sleep -Seconds 3
+    Wait-LiveTelemetry
     $bounds = $root.Current.BoundingRectangle
     $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
