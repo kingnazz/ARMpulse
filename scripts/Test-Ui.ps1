@@ -93,6 +93,13 @@ try {
         throw 'WPF reported binding warnings or errors.'
     }
     @{ passed = $true; checks = $checks.ToArray() } | ConvertTo-Json | Set-Content (Join-Path $outputPath 'result.json')
+} catch {
+    $detail = $_.Exception.Message + ' | Completed checks: ' + ($checks -join '; ')
+    if (!$app.HasExited) { $app.CloseMainWindow() | Out-Null; $app.WaitForExit(3000) | Out-Null }
+    if (Test-Path $bindingLog) { $detail += ' | WPF diagnostics: ' + (Get-Content $bindingLog -Raw) }
+    $escaped = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+    Write-Output "::error title=Desktop smoke test::$escaped"
+    throw
 } finally {
     if (!$app.HasExited) { $app.Kill(); $app.WaitForExit() }
 }

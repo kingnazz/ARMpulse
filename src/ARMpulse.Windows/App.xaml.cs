@@ -41,6 +41,8 @@ public partial class App : Application
             var listener = new TextWriterTraceListener(e.Args[1]);
             PresentationTraceSources.DataBindingSource.Listeners.Add(listener);
             PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Warning;
+            DispatcherUnhandledException += (_, args) => { listener.WriteLine(args.Exception); listener.Flush(); };
+            AppDomain.CurrentDomain.UnhandledException += (_, args) => { listener.WriteLine(args.ExceptionObject); listener.Flush(); };
             Exit += (_, _) => { listener.Flush(); listener.Close(); };
         }
         else if (e.Args.Length > 0)
