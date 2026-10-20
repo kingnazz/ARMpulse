@@ -1,0 +1,35 @@
+name: Publish portable Windows release
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Test and package both architectures
+        shell: pwsh
+        run: |
+          ./scripts/Publish.ps1 -Runtime win-arm64
+          ./scripts/Publish.ps1 -Runtime win-x64
+      - name: Publish preview downloads
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_REPO: ${{ github.repository }}
+        run: |
+          gh release create $env:RELEASE_TAG --repo $env:RELEASE_REPO --verify-tag `
+            --title "ARMpulse $env:RELEASE_TAG — Windows preview" --prerelease `
+            --notes-file docs/RELEASE_NOTES.md `
+            artifacts/ARMpulse-win-arm64.zip artifacts/ARMpulse-win-arm64.zip.sha256 `
+            artifacts/ARMpulse-win-x64.zip artifacts/ARMpulse-win-x64.zip.sha256
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed.' }

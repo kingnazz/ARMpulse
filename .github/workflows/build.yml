@@ -1,0 +1,43 @@
+name: Build and validate Windows app
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Test and package ARM64
+        shell: pwsh
+        run: ./scripts/Publish.ps1 -Runtime win-arm64
+      - name: Test and package x64
+        shell: pwsh
+        run: ./scripts/Publish.ps1 -Runtime win-x64
+      - name: Exercise real Windows collectors and process actions on x64
+        shell: pwsh
+        run: |
+          $exe = Resolve-Path artifacts/ARMpulse-win-x64/ARMpulse.exe
+          $result = Join-Path $PWD 'artifacts/windows-smoke.json'
+          $app = Start-Process $exe -ArgumentList @('--smoke-test', $result) -Wait -PassThru
+          if ($app.ExitCode -ne 0) { throw "Native smoke test failed: $($app.ExitCode)" }
+          $evidence = Get-Content $result -Raw | ConvertFrom-Json
+          if (!$evidence.passed) { throw 'Missing passing evidence.' }
+          Get-Content $result
+      - name: Exercise desktop navigation and capture screenshot
+        shell: pwsh
+        run: ./scripts/Test-Ui.ps1 -Executable artifacts/ARMpulse-win-x64/ARMpulse.exe -Output artifacts/ui-smoke
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARMpulse-windows
+          path: |
+            artifacts/*.zip
+            artifacts/*.sha256
+            artifacts/*smoke*
+          if-no-files-found: error
