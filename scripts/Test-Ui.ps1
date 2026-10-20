@@ -75,6 +75,8 @@ function Select-ComboOption([string]$Name, [string]$Option) {
 }
 
 function Save-Screenshot([string]$FileName) {
+    # Let the compositor paint after automation switches a page or closes a popup.
+    Start-Sleep -Milliseconds 250
     $bounds = $root.Current.BoundingRectangle
     $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
