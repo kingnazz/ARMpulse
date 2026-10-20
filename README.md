@@ -10,7 +10,7 @@ A native Windows task manager for your Snapdragon Surface. Inspired by the clari
 
 This initial build is unsigned. Windows may show a SmartScreen warning. Only run a build you trust; the ZIP has a companion SHA-256 file for integrity checking. There is no installer or auto-updater. Close the app and delete its folder to remove it; preferences live in `%LOCALAPPDATA%\ARMpulse\settings.json`.
 
-The ZIP is produced in `artifacts/` by the build below. The **Build and validate Windows app** GitHub Actions workflow builds ARM64 and x64 packages and retains them as workflow artifacts. Pushing a `v*` tag runs **Publish portable Windows release**, which tests, builds, and publishes both downloads as a preview release using GitHub's built-in token. Preview publication does not certify Surface hardware behavior; the Windows integration workflow reports its own results separately.
+The ZIP is produced in `artifacts/` by the build below. The **Build and validate Windows app** GitHub Actions workflow builds ARM64 and x64 packages and retains them as workflow artifacts. Pushing a `v*` tag runs **Publish portable Windows release**, which tests, builds, and verifies the Windows telemetry and desktop interface before publishing preview downloads with GitHub's built-in token. Surface ARM64 hardware behavior still needs testing. Use version **0.1.1 or later**; the first 0.1.0 preview has a startup binding error.
 
 ## What it does
 

@@ -20,6 +20,16 @@ jobs:
         run: |
           ./scripts/Publish.ps1 -Runtime win-arm64
           ./scripts/Publish.ps1 -Runtime win-x64
+      - name: Verify real Windows telemetry and desktop startup
+        shell: pwsh
+        run: |
+          $exe = Resolve-Path artifacts/ARMpulse-win-x64/ARMpulse.exe
+          $result = Join-Path $PWD 'artifacts/windows-smoke.json'
+          $app = Start-Process $exe -ArgumentList @('--smoke-test', $result) -Wait -PassThru
+          if ($app.ExitCode -ne 0) { throw "Native smoke test failed: $($app.ExitCode)" }
+          $evidence = Get-Content $result -Raw | ConvertFrom-Json
+          if (!$evidence.passed) { throw 'Missing passing native evidence.' }
+          ./scripts/Test-Ui.ps1 -Executable $exe -Output artifacts/ui-smoke
       - name: Publish preview downloads
         shell: pwsh
         env:
