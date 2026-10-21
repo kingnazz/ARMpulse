@@ -1,0 +1,75 @@
+name: Publish ARMpulse website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/pages.yml'
+      - 'scripts/check-website.cjs'
+  pull_request:
+    paths:
+      - 'website/**'
+      - '.github/workflows/pages.yml'
+      - 'scripts/check-website.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Check and package website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check links, screenshots, keyboard controls, and responsive layouts
+        run: |
+          npm install --prefix "$RUNNER_TEMP/website-check" --no-audit --no-fund playwright@1.61.1
+          export NODE_PATH="$RUNNER_TEMP/website-check/node_modules"
+          "$RUNNER_TEMP/website-check/node_modules/.bin/playwright" install --with-deps chromium
+          node scripts/check-website.cjs
+      - name: Check release downloads
+        run: |
+          for arch in arm64 x64; do
+            curl --fail --silent --show-error --head --location "https://github.com/kingnazz/ARMpulse/releases/download/v0.2.1/ARMpulse-win-${arch}.zip" -o /dev/null
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: website-previews
+          path: ${{ runner.temp }}/armpulse-site-*.png
+          if-no-files-found: ignore
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/deploy-pages@v4
+        id: deployment
+      - name: Verify published page and assets
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          curl --fail --silent --show-error --location --retry 6 --retry-all-errors --retry-delay 10 "$PAGE_URL" -o "$RUNNER_TEMP/live.html"
+          grep -q 'Your Surface.' "$RUNNER_TEMP/live.html"
+          for asset in styles.css script.js assets/overview.png assets/processes.png assets/memory.png assets/history.png assets/settings.png; do
+            curl --fail --silent --show-error --location "${PAGE_URL}${asset}" -o /dev/null
+          done
+          printf 'Published and checked: %s\n' "$PAGE_URL" >> "$GITHUB_STEP_SUMMARY"

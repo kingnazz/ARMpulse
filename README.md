@@ -2,6 +2,8 @@
 
 A native Windows task manager for your Snapdragon Surface. Inspired by the clarity of [SiliconPulse](https://github.com/kingnazz/SiliconPulse-), independently implemented in C# and WPF for Windows on ARM.
 
+[Website](https://kingnazz.github.io/ARMpulse/) · [Windows downloads](https://github.com/kingnazz/ARMpulse/releases/tag/v0.2.1)
+
 The 0.2 interface uses a compact instrument panel with individual CPU and memory charts, smaller network/power readouts, and separate top-consumer lists. Click a top process to inspect it. The same dark styling carries through the process table, search, dropdowns, and scrollbars.
 
 ## Run on your Surface
@@ -95,6 +97,15 @@ src/ARMpulse.Windows    WPF interface, Win32 collectors, process controls, prefe
 tests/ARMpulse.Tests   Cross-platform xUnit tests
 scripts/               Packaging, Linux setup, Windows UI automation
 .github/workflows/     Windows builds and integration checks
+website/               GitHub Pages site, real app screenshots, and download links
 ```
+
+## Website
+
+The static site in `website/` uses plain HTML, CSS, and JavaScript, with no build step or external runtime dependencies. Serve that directory with any static file server to edit it. Keep the version and ARM64/x64 download links in `website/index.html` and the download check in `.github/workflows/pages.yml` in sync when publishing a new app release.
+
+**Publish ARMpulse website** checks screenshots, links, keyboard navigation, and responsive layouts, then deploys `website/` to GitHub Pages when it changes on `main`. Pull requests run the checks without deploying. Browser preview screenshots are attached to the workflow run. To run the same checks locally, install `playwright@1.61.1`, install its Chromium browser, and run `node scripts/check-website.cjs`. Set `CHROMIUM_PATH` to use an existing Chromium installation.
+
+For a new repository, enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once, then run the website workflow. Subsequent site changes publish automatically. The workflow uses GitHub's built-in token; it needs no stored deployment secret.
 
 The source is independently written. No code or image assets from SiliconPulse are bundled. Your machine’s identifiers and specifications are detected at runtime; the screenshot’s serial number, product ID, and device ID are not embedded.

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111714">
+  <meta name="description" content="A clearer task manager for your Snapdragon Surface. Follow CPU and memory, find the apps using your resources, and download ARMpulse for Windows ARM64 or x64.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ARMpulse — Your Surface. Understood.">
+  <meta property="og:description" content="Live resources. The processes behind them. A native Windows task manager built for Windows on ARM.">
+  <meta property="og:url" content="https://kingnazz.github.io/ARMpulse/">
+  <meta property="og:image" content="https://kingnazz.github.io/ARMpulse/assets/overview.png">
+  <meta property="og:image:alt" content="ARMpulse's Windows interface with CPU and memory charts and top process lists">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://kingnazz.github.io/ARMpulse/">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <title>ARMpulse — Your Surface. Understood.</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6-9 9M9 4H4v16h16v-5"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/><path d="M10 10h4v4h-4z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M6 15l4-5 4 3 6-8"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M3 7h18M3 17h18M8 3v8m8 2v8"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="./" aria-label="ARMpulse home"><img src="assets/icon.svg" width="29" height="29" alt=""><span>ARMpulse</span></a>
+      <div class="nav-links"><a href="#features">Features</a><a href="#inside">The app</a><a href="https://github.com/kingnazz/ARMpulse" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon small" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+      <a class="button nav-download" href="#download">Get ARMpulse <svg class="icon small" aria-hidden="true"><use href="#i-download"/></svg></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-heading">
+      <p class="eyebrow"><span class="status-dot"></span> BUILT FOR WINDOWS ON ARM</p>
+      <h1 id="hero-heading">Your Surface.<br><span>Understood.</span></h1>
+      <p class="hero-copy">A clearer view of your PC, and the apps behind the activity. Native Windows monitoring for your Snapdragon Surface.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="https://github.com/kingnazz/ARMpulse/releases/download/v0.2.1/ARMpulse-win-arm64.zip"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Download for ARM64</a>
+        <a class="button button-quiet" href="#inside">Take a look <svg class="icon small" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <p class="release-meta">v0.2.1 preview <span>·</span> Windows 11 <span>·</span> Portable ZIP</p>
+    </section>
+
+    <section id="inside" class="showcase wrap" aria-labelledby="showcase-heading">
+      <div class="showcase-top"><h2 id="showcase-heading">A little less digging.</h2><span class="showcase-note"><span class="status-dot"></span> THE ACTUAL WINDOWS APP</span></div>
+      <div class="app-frame" id="app-panel" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+        <img id="app-screenshot" src="assets/overview.png" alt="ARMpulse Overview with CPU and memory charts, network and power, and top CPU and memory process lists" width="992" height="688" fetchpriority="high" decoding="async">
+      </div>
+      <div class="screenshot-tabs" role="tablist" aria-label="Explore ARMpulse screens">
+        <a id="tab-overview" class="screenshot-tab" role="tab" aria-selected="true" aria-controls="app-panel" tabindex="0" href="assets/overview.png" data-screen="overview">Overview</a>
+        <a id="tab-processes" class="screenshot-tab" role="tab" aria-selected="false" aria-controls="app-panel" tabindex="-1" href="assets/processes.png" data-screen="processes">Processes</a>
+        <a id="tab-memory" class="screenshot-tab" role="tab" aria-selected="false" aria-controls="app-panel" tabindex="-1" href="assets/memory.png" data-screen="memory">Memory</a>
+        <a id="tab-history" class="screenshot-tab" role="tab" aria-selected="false" aria-controls="app-panel" tabindex="-1" href="assets/history.png" data-screen="history">History</a>
+        <a id="tab-settings" class="screenshot-tab" role="tab" aria-selected="false" aria-controls="app-panel" tabindex="-1" href="assets/settings.png" data-screen="settings">Settings</a>
+      </div>
+      <p id="screen-caption" class="screen-caption" aria-live="polite">Your key resources and their top consumers, together.</p>
+      <p class="screenshot-source">Real screenshots captured on an x64 Windows test machine. Readings will reflect your own PC.</p>
+    </section>
+
+    <div class="benefit-strip wrap" aria-label="At a glance">
+      <span><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg> Native ARM64 build</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg> Metrics stay on your PC</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#i-windows"/></svg> Runtime included</span>
+    </div>
+
+    <section id="features" class="features wrap section-space" aria-labelledby="features-heading">
+      <div class="section-intro"><p class="eyebrow">THE USEFUL DETAILS</p><h2 id="features-heading">Follow the load.<br>Find the process.</h2><p>Start with the whole system. Go straight to the app that needs your attention.</p></div>
+      <div class="feature-grid">
+        <article class="feature-card"><div class="feature-top"><svg class="icon feature-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>01 / OBSERVE</span></div><h3>Keep the context.</h3><p>Live CPU and memory charts, network throughput, battery, and power source. Recent history helps you distinguish a spike from a pattern.</p><div class="feature-tags"><span>CPU</span><span>Memory</span><span>Network</span><span>Power</span></div></article>
+        <article class="feature-card"><div class="feature-top"><svg class="icon feature-icon" aria-hidden="true"><use href="#i-search"/></svg><span>02 / FIND</span></div><h3>Meet the heavy hitters.</h3><p>Top CPU and memory lists take you straight to process details. Search by name, PID, or path, then filter and sort to narrow the list.</p><div class="feature-tags"><span>Search</span><span>Sort</span><span>Inspect</span></div></article>
+        <article class="feature-card"><div class="feature-top"><svg class="icon feature-icon" aria-hidden="true"><use href="#i-sliders"/></svg><span>03 / ACT</span></div><h3>A more informed next step.</h3><p>Open an executable’s folder, lower CPU priority, or end a process with confirmation. Export a filtered snapshot as CSV when you need a record.</p><div class="feature-tags"><span>Process controls</span><span>CSV export</span></div></article>
+        <article class="feature-card"><div class="feature-top"><svg class="icon feature-icon" aria-hidden="true"><use href="#i-chip"/></svg><span>04 / UNDERSTAND</span></div><h3>Built with ARM in mind.</h3><p>See ARM-native and compatibility process types. Identify x64 and x86 apps running on ARM without assuming every module is emulated.</p><div class="feature-tags"><span>ARM64</span><span>Architecture visibility</span></div></article>
+      </div>
+    </section>
+
+    <section class="local-section wrap" aria-labelledby="local-heading">
+      <div class="local-icon"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
+      <div><p class="eyebrow">YOUR COMPUTER. YOUR DATA.</p><h2 id="local-heading">The activity stays here.</h2><p>No accounts, analytics, or uploads in the app. History stays in memory and clears when you quit. Closing the window closes ARMpulse.</p></div>
+      <a class="text-link" href="https://github.com/kingnazz/ARMpulse#what-it-measures" target="_blank" rel="noopener noreferrer">See how it works <svg class="icon small" aria-hidden="true"><use href="#i-external"/></svg></a>
+    </section>
+
+    <section id="download" class="download-section section-space" aria-labelledby="download-heading">
+      <div class="wrap">
+        <div class="download-heading"><div><p class="eyebrow">A CLEARER PICTURE STARTS HERE</p><h2 id="download-heading">Make yourself<br>at home.</h2></div><p>Pick your Windows build.<br> Extract the ZIP. Open <code>ARMpulse.exe</code>.</p></div>
+        <div class="download-grid">
+          <article class="download-card recommended"><div class="build-heading"><svg class="icon" aria-hidden="true"><use href="#i-chip"/></svg><span class="build-badge">FOR SNAPDRAGON SURFACE</span></div><h3>Windows ARM64</h3><p>For Snapdragon Surface laptops and other Windows on ARM PCs.</p><a class="button button-dark" href="https://github.com/kingnazz/ARMpulse/releases/download/v0.2.1/ARMpulse-win-arm64.zip"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Download ARM64</a><span class="build-footnote">v0.2.1 preview · Portable ZIP · Runtime included</span></article>
+          <article class="download-card"><div class="build-heading"><svg class="icon" aria-hidden="true"><use href="#i-windows"/></svg><span class="build-badge">FOR INTEL &amp; AMD PCS</span></div><h3>Windows x64</h3><p>For Windows PCs with an Intel or AMD 64-bit processor.</p><a class="button button-outline" href="https://github.com/kingnazz/ARMpulse/releases/download/v0.2.1/ARMpulse-win-x64.zip"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Download x64</a><span class="build-footnote">v0.2.1 preview · Portable ZIP · Runtime included</span></article>
+        </div>
+        <div class="download-details"><p>Windows 11 · Unsigned preview. Windows may show a SmartScreen prompt.</p><a href="https://github.com/kingnazz/ARMpulse/releases/tag/v0.2.1" target="_blank" rel="noopener noreferrer">Release notes &amp; checksums <svg class="icon small" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+      </div>
+    </section>
+
+    <section class="faq-section wrap section-space" aria-labelledby="faq-heading">
+      <div class="section-intro"><p class="eyebrow">BEFORE YOU OPEN IT</p><h2 id="faq-heading">A few good questions.</h2></div>
+      <div class="faq-list">
+        <details><summary>Which build does my Surface need?<span class="faq-symbol" aria-hidden="true"></span></summary><p>A Snapdragon Surface uses ARM64. Intel and AMD Windows PCs use x64. If you’re unsure, open Windows Settings → System → About and check the processor and system type. Both downloads include the runtime.</p></details>
+        <details><summary>What does ARMpulse measure?<span class="faq-symbol" aria-hidden="true"></span></summary><p>The current version shows CPU, physical memory, network throughput, battery, and process data. GPU/NPU utilization, temperatures, fan speeds, and memory compression are not supported in this version. Restricted readings show a dash.</p></details>
+        <details><summary>How do I install or remove it?<span class="faq-symbol" aria-hidden="true"></span></summary><p>Extract the ZIP into a folder you control, then run ARMpulse.exe. There’s no installer, service, or automatic startup entry. To remove it, close the app and delete its folder. Preferences are stored locally under %LOCALAPPDATA%\ARMpulse.</p></details>
+        <details><summary>Why might Windows show a warning?<span class="faq-symbol" aria-hidden="true"></span></summary><p>This preview is unsigned, so Windows may show a SmartScreen warning. Only run a build you trust. The GitHub release includes SHA-256 files so you can check the ZIP’s integrity.</p></details>
+        <details><summary>What can I do to a process?<span class="faq-symbol" aria-hidden="true"></span></summary><p>You can open its executable folder, set Below Normal CPU priority, or force end it after confirmation. Ending a process can lose unsaved work. ARMpulse respects Windows access restrictions and protects critical and system processes. Lower priority is not Windows Efficiency Mode.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap">
+    <div><a class="wordmark" href="./"><img src="assets/icon.svg" width="25" height="25" alt=""><span>ARMpulse</span></a><p>A little more clarity. Built for Windows.</p></div>
+    <nav aria-label="Footer navigation"><a href="https://github.com/kingnazz/ARMpulse">Source</a><a href="https://github.com/kingnazz/ARMpulse/releases">Releases</a><a href="https://github.com/kingnazz/ARMpulse/issues">Feedback</a></nav>
+    <span class="copyright">© 2026 ARMpulse</span>
+  </footer>
+</body>
+</html>
